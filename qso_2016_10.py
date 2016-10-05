@@ -104,5 +104,9 @@ q('''
   36 46 kc7o 64 lang
 ''')
 
-for qso in QSOs:
-  print qso
+CheckUnique()
+Verbose()
+
+WriteHeader()
+WriteQsoLines()
+WriteFooter()
