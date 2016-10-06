@@ -103,7 +103,7 @@ CATEGORY-POWER: LOW
 CATEGORY-TRANSMITTER: ONE
 CLAIMED-SCORE: %d
 LOCATION: SCV
-CREATED-BY: github.com/strickyak/ham-cabrillo-py
+CREATED-BY: http://github.com/strickyak/ham-cabrillo-py
 EMAIL: %s
 NAME: %s
 ADDRESS: %s
