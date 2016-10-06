@@ -23,7 +23,7 @@ q('''
 h(19)
 q('''
   00 4 w6sf 40 sjoa
-  01 5 k6mdb 24 sacr
+  01 5 k6mbd 24 sacr
   02 6 n6sjv 13 sjoa
   03 7 ko6jf 62 napa
   04 8 ke6lb 12 lang
@@ -64,7 +64,7 @@ q("11 22 k6yl 125 sber")
 # Page 4
 
 q('''
-  18 23 j6js 620 sola
+  18 23 n6js 620 sola
   25 24 w6zq 61 sber
   27 25 w6yx 81 scla
   34 26 km6z 433 lang
@@ -104,7 +104,7 @@ q('''
   36 46 kc7o 64 lang
 ''')
 
-CheckUnique()
+CountUnique()
 Verbose()
 
 WriteHeader()

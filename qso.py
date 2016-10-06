@@ -1,8 +1,14 @@
-import sys
+## Put these in your environment.
+import os, sys
+Call = os.getenv("CALL").upper()
+FullName = os.getenv("FULLNAME")
+StreetAddress = os.getenv("STREET")
+Email = os.getenv("EMAIL")
+
 E = sys.stderr
+FOR_PHONE = 2  # Points.  We only do Phone.
 
 # Importer should reset these defaults.
-Call = 'W6REK'
 Location = 'SCLA'
 Mode = 'PH'
 Freq = 7000
@@ -47,12 +53,16 @@ def q(t):
 
     QSOs.append((Freq, Mode, '%s %02d%02d' % (Date, Hour, minute), Call, seq, Location, peer, pseq, ploc))
 
-def CheckUnique():
+def CountUnique():
   peers = {}
   for qso in QSOs:
     freq, mode, timestamp, call, seq, loc, peer, pseq, ploc = qso
     if peer in peers:
-      raise Exception("You got peer %s twice: %s" % (peer, repr(qso)))
+      print >>E, "Duplicate: %s" % peer
+    n = peers.get(peer, 0)
+    peers[peer] = n+1
+  print >>E, "PEERS: %s" % sorted(peers.items())
+  return len(peers)
 
 def CountMultipliers():
   plocs = {}
@@ -81,7 +91,7 @@ def WriteQsoLines():
 def Verbose():
   print >>E, "Number QSOs: %d" % len(QSOs)
   print >>E, "Multipliers: %d" % CountMultipliers()
-  print >>E, "Score: %d" % (CountMultipliers() * len(QSOs))
+  print >>E, "Score: %d" % (FOR_PHONE * CountMultipliers() * CountUnique())
 
 def WriteHeader():
   print '''START-OF-LOG: 3.0
@@ -92,7 +102,7 @@ CATEGORY-ASSISTED: NON-ASSISTED
 CATEGORY-POWER: LOW
 CATEGORY-TRANSMITTER: ONE
 CLAIMED-SCORE: %d
-LOCATION: WMA
+LOCATION: SCV
 CREATED-BY: github.com/strickyak/ham-cabrillo-py
 EMAIL: %s
 NAME: %s
@@ -105,23 +115,12 @@ OPERATORS: %s
 SOAPBOX: Thanks this was fun!
 SOAPBOX:''' % (
     Call,
-    (CountMultipliers() * len(QSOs)),
-    '%s@%s.%s' % tuple([Rot(s) for s in ('fgevpx','lnx','arg')]),
-    Rot('Urael Fgevpxynaq'),
-    Rot('%d Zbagr Fnab Nir Ncg 1' % (15*81)),
+    (FOR_PHONE * CountMultipliers() * CountUnique()),
+    Email,
+    FullName,
+    StreetAddress,
     Call,
     )
 
 def WriteFooter():
   print 'END-OF-LOG:'
-
-def Rot(s):
-  a = [ord(c) for c in s]
-  def r(n):
-    if (0xE0 & n) == 64:
-      return (((n-65)+13)%26)+65
-    if (0xE0 & n) == 96:
-      return (((n-97)+13)%26)+97
-    return n
-  b = [r(x) for x in a]
-  return ''.join([chr(x) for x in b])
