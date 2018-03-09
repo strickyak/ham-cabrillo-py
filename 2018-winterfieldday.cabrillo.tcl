@@ -1,3 +1,5 @@
+fconfigure stdout -translation {auto crlf}
+
 set FormattedQsos ""
 proc q {band time call class loc points} {
   global M Q Date LastTime FormattedQsos

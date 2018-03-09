@@ -1,0 +1,137 @@
+http://b4h.net/cabforms/arrldxssb_cab3.php
+--------------------------------------------------------
+
+Enter your QSO data in this text area, one QSO per line. Each of the fields below must be entered for each QSO. One or more spaces must separate each item in a QSO. All dates and times must be in UTC. If the time of the QSO is not known, enter 0000.
+--------------------------------------------------------
+Band Date Time Call-Copied RST-Copied QTH_or_Pwr-Copied 
+20   3/3 0000 df0hq       59         100               
+--------------------------------------------------------
+<-Enter your QSO data starting on the next line. Do not erase this line.->
+40 3/3 0719 pj0dx 59 1000
+40 3/3 0744 zf5o 59 1000
+40 3/3 0842 zf2mj 59 1000
+40 3/3 7175 yv1kk 59 1000
+40 3/3 0928 ja7qvi 59 1000
+40 3/3 0932 ja8nfv 59 1000
+40 3/3 0933 jg4akl 59 1000
+40 3/3 1009 lu5fc 59 1000
+40 3/3 1025 jh4uyb 59 1000
+40 3/3 1029 zf2mj 59 1000
+80 3/3 1058 pj4g 59 1000
+40 3/4 0532 p40l 59 1000
+40 3/4 0818 hi3k 59 1000
+40 3/4 0830 ja0qnv  59 1000
+40 3/4 0832 ja3ybk 59 1000
+40 3/4 0840 jh8yoh 59 1000
+40 3/4 0841 h72dx 59 1000
+40 3/4 0854 pz5k 59 1000
+40 3/4 0906 ti1t 59 1000
+40 3/4 0913 xe2t 59 500
+80 3/4 0940 xe2t 59 500
+80 3/4 0946 pj0dx 59 1000
+80 3/4 0951 pk4ke 59 100
+80 3/4 0955 kh6lc 59 1000
+80 3/4 0959 kl7ra 59 1000
+80 3/4 1003 kh7m 59 1000
+80 3/4 1115 p40l 59 1000
+80 3/4 1128 h72dx 59 1000
+80 3/4 1146 jg7psj 59 1000
+20 3/4 2012 kl7ra 59 1000
+20 3/4 2014 nl7v 59 1000
+20 3/4 2038 tm0t 59 1000
+
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
+
+ARRL Contest Log Submission
+Congratulations! You've successfully uploaded your ARRL Phone International DX contest log. Your confirmation number is 4386673.arrl-dx-ssb.
+
+Thank you for entering the contest and submitting your log via the ARRL's web form. Please review the information listed below and, if necessary, resubmit your log to make any corrections. If you have any questions about your log, please contact the Contest section at contests@arrl.org.
+
+Analysis of your uploaded log:
+
+Contest:	ARRL-DX-SSB	[contest rules]
+Call Sign:	W6REK
+Category:	Single Operator, High Power
+Operator:	SINGLE-OP	Created from Number of operators question (Answer: Only one)
+Assisted:	NON-ASSISTED	Created from Spotting assistance question (Answer: No)
+Power:	HIGH	Created from Highest power question (Answer: More than 150W)
+Band:	ALL
+Transmitter:	ONE
+Station:	FIXED
+Location:	SCV
+Station Grid:	CM97ah
+E-mail:	strick@yak.net
+QSOs in Log:	32
+Log received at: 2018-03-09 09:17:46 UTC
+
+
+Your submitted log follows:
+
+START-OF-LOG: 3.0
+CONTEST: ARRL-DX-SSB
+LOCATION: SCV
+CALLSIGN: W6REK
+CATEGORY-OPERATOR: SINGLE-OP
+CATEGORY-ASSISTED: NON-ASSISTED
+CATEGORY-POWER: HIGH
+CATEGORY-BAND: ALL
+EMAIL: strick@yak.net
+CATEGORY-MODE: SSB
+CATEGORY-STATION: FIXED
+CATEGORY-TRANSMITTER: ONE
+CLAIMED-SCORE: 
+CREATED-BY: WA7BNM WEB2CABRILLO 2.07
+NAME: HENRY STRICKLAND
+OPERATORS: W6REK
+ADDRESS: 1215 MONTE SANO AVE APT 1
+ADDRESS: AUGUSTA GA 30904
+SOAPBOX: THIS WAS MY FIRST TIME REALLY DOING DX!
+X-LOCATION: SCV
+X-CATEGORY-ASSISTED: NON-ASSISTED
+X-CATEGORY-BAND: ALL
+X-CATEGORY-OPERATOR: SINGLE-OP
+X-CATEGORY-POWER: HIGH
+X-EMAIL: STRICK@YAK.NET
+X-SubQuestions: Pwr=HIGH Ops=1 Assist=N CheckLog=notchecked
+HQ-CATEGORY: Single Operator, High Power
+HQ-CAT: SOHP
+HQ-DATE-RECEIVED: 2018-03-09 09:17:46 UTC
+HQ-LOG-DEADLINE: 2018-03-10 00:00:00 UTC
+HQ-GRID-LOCATOR: CM97ah
+QSO: 7000 PH 2018-03-03 0719 W6REK 59 CA PJ0DX 59 1000
+QSO: 7000 PH 2018-03-03 0744 W6REK 59 CA ZF5O 59 1000
+QSO: 7000 PH 2018-03-03 0842 W6REK 59 CA ZF2MJ 59 1000
+QSO: 7000 PH 2018-03-03 0852 W6REK 59 CA YV1KK 59 1000
+QSO: 7000 PH 2018-03-03 0928 W6REK 59 CA JA7QVI 59 1000
+QSO: 7000 PH 2018-03-03 0932 W6REK 59 CA JA8NFV 59 1000
+QSO: 7000 PH 2018-03-03 0933 W6REK 59 CA JG4AKL 59 1000
+QSO: 7000 PH 2018-03-03 1009 W6REK 59 CA LU5FC 59 1000
+QSO: 7000 PH 2018-03-03 1025 W6REK 59 CA JH4UYB 59 1000
+QSO: 7000 PH 2018-03-03 1029 W6REK 59 CA ZF2MJ 59 1000
+QSO: 3500 PH 2018-03-03 1058 W6REK 59 CA PJ4G 59 1000
+QSO: 7000 PH 2018-03-04 0532 W6REK 59 CA P40L 59 1000
+QSO: 7000 PH 2018-03-04 0818 W6REK 59 CA HI3K 59 1000
+QSO: 7000 PH 2018-03-04 0830 W6REK 59 CA JA0QNV 59 1000
+QSO: 7000 PH 2018-03-04 0832 W6REK 59 CA JA3YBK 59 1000
+QSO: 7000 PH 2018-03-04 0840 W6REK 59 CA JH8YOH 59 1000
+QSO: 7000 PH 2018-03-04 0841 W6REK 59 CA H72DX 59 1000
+QSO: 7000 PH 2018-03-04 0854 W6REK 59 CA PZ5K 59 1000
+QSO: 7000 PH 2018-03-04 0906 W6REK 59 CA TI1T 59 1000
+QSO: 7000 PH 2018-03-04 0913 W6REK 59 CA XE2T 59 500
+QSO: 3500 PH 2018-03-04 0940 W6REK 59 CA XE2T 59 500
+QSO: 3500 PH 2018-03-04 0946 W6REK 59 CA PJ0DX 59 1000
+QSO: 3500 PH 2018-03-04 0951 W6REK 59 CA PK4KE 59 100
+QSO: 3500 PH 2018-03-04 0955 W6REK 59 CA KH6LC 59 1000
+QSO: 3500 PH 2018-03-04 0959 W6REK 59 CA KL7RA 59 1000
+QSO: 3500 PH 2018-03-04 1003 W6REK 59 CA KH7M 59 1000
+QSO: 3500 PH 2018-03-04 1115 W6REK 59 CA P40L 59 1000
+QSO: 3500 PH 2018-03-04 1128 W6REK 59 CA H72DX 59 1000
+QSO: 3500 PH 2018-03-04 1146 W6REK 59 CA JG7PSJ 59 1000
+QSO: 14000 PH 2018-03-04 2012 W6REK 59 CA KL7RA 59 1000
+QSO: 14000 PH 2018-03-04 2014 W6REK 59 CA NL7V 59 1000
+QSO: 14000 PH 2018-03-04 2038 W6REK 59 CA TM0T 59 1000
+END-OF-LOG:
