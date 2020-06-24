@@ -1,0 +1,45 @@
+f=144.000  m=ph d=2020-06-13 t=1956  'w6rek/r cm97'  k6djv cm97 #derrick
+f=432.000  m=ph d=2020-06-13 t=2023  'w6rek/r cm97'  nu6s cm87
+f=432.000  m=ph d=2020-06-13 t=2037  'w6rek/r cm97'  w6ia cm97
+f=432.000  m=ph d=2020-06-13 t=2037  'w6rek/r cm97'  kf6qch cm87
+f=144.000  m=ph d=2020-06-13 t=2048  'w6rek/r cm97'  w6bg cm87
+f=144.000  m=ph d=2020-06-13 t=2055  'w6rek/r cm97'  k6qfo cm97 #mike
+f=144.000  m=ph d=2020-06-13 t=2101  'w6rek/r cm97'  w6aer cm87
+f=432.000  m=ph d=2020-06-13 t=2104  'w6rek/r cm97'  w6bg cm87
+f=432.000  m=ph d=2020-06-13 t=2110  'w6rek/r cm97'  k6qfo cm97
+f=432.000  m=ph d=2020-06-13 t=2114  'w6rek/r cm97'  k6eu cm97
+f=432.000  m=ph d=2020-06-13 t=2117  'w6rek/r cm97'  ad6a cm97
+f=144.000  m=ph d=2020-06-13 t=2118  'w6rek/r cm97'  ad6a cm97
+f=144.000  m=ph d=2020-06-13 t=2119  'w6rek/r cm97'  aj6v cm87
+f=144.000  m=ph d=2020-06-13 t=2120  'w6rek/r cm97'  k6eu cm97
+f=222.000  m=ph d=2020-06-13 t=2135  'w6rek/r cm97'  k6eu cm97
+f=222.000  m=ph d=2020-06-13 t=2135  'w6rek/r cm97'  k6qfo cm97
+f=144.000  m=ph d=2020-06-13 t=2145  'w6rek/r cm97'  km6hbh cm97
+f=432.000  m=ph d=2020-06-13 t=2145  'w6rek/r cm97'  n6voa cm97 # our nick
+f=144.000  m=ph d=2020-06-13 t=2201  'w6rek/r cm97'  nu6s cm87
+f=144.000  m=ph d=2020-06-13 t=2210  'w6rek/r cm97'  k6mug cm97
+f=144.000  m=ph d=2020-06-13 t=2215  'w6rek/r cm97'  n6pse cm97
+f=144.000  m=ph d=2020-06-14 t=1921  'w6rek/r cm87'  aa6xa cm97
+f=144.000  m=ph d=2020-06-14 t=1921  'w6rek/r cm87'  w6bg cm87
+f=144.000  m=ph d=2020-06-14 t=1921  'w6rek/r cm87'  nu6s cm87
+f=144.000  m=ph d=2020-06-14 t=1921  'w6rek/r cm87'  kc6zwt cm98
+f=432.000  m=ph d=2020-06-14 t=1921  'w6rek/r cm87'  nu6s cm87 # tim
+f=432.000  m=ph d=2020-06-14 t=1930  'w6rek/r cm87'  aa6xa cm97
+f=144.000  m=ph d=2020-06-14 t=1939  'w6rek/r cm87'  k6djv cm97
+f=144.000  m=ph d=2020-06-14 t=1944  'w6rek/r cm87'  n6vfh cm97 # our chuck
+f=144.000  m=ph d=2020-06-14 t=1945  'w6rek/r cm87'  wb6ety cm97
+f=144.000  m=ph d=2020-06-14 t=1946  'w6rek/r cm87'  wd6t cm87
+f=144.000  m=ph d=2020-06-14 t=2005  'w6rek/r cm87'  km6tmz cm97
+f=144.000  m=ph d=2020-06-14 t=2000  'w6rek/r cm87'  k2gmy cm88
+f=144.000  m=ph d=2020-06-14 t=2000  'w6rek/r cm87'  dn5dim cm98
+f=144.000  m=ph d=2020-06-14 t=2006  'w6rek/r cm87'  ag6ja cm97
+f=144.000  m=ph d=2020-06-14 t=2025  'w6rek/r cm87'  k6wis cm97
+f=144.000  m=ph d=2020-06-14 t=2032  'w6rek/r cm87'  w6esl cm97
+f=144.000  m=ph d=2020-06-14 t=2035  'w6rek/r cm87'  kf6qch cm87
+f=144.000  m=ph d=2020-06-14 t=2140  'w6rek/r cm97'  wb6dce cm96 # seaside
+f=432.000  m=ph d=2020-06-14 t=2335  'w6rek/r cm96'  wb6dce cm96
+f=222.000  m=ph d=2020-06-15 t=0005  'w6rek/r cm96'  wb6dce cm96
+f=144.000  m=ph d=2020-06-15 t=0145  'w6rek/r cm96'  k6cqx cm96 #seaside
+f=144.000  m=ph d=2020-06-15 t=0145  'w6rek/r cm96'  km6dpw cm96 #aptos
+f=144.000  m=ph d=2020-06-15 t=0238  'w6rek/r cm97'  n6tu cm97 #chris
+f=144.000  m=ph d=2020-06-15 t=0206  'w6rek/r cm97'
