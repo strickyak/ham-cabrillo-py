@@ -2,36 +2,46 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/chzyer/readline"
 )
 
-var txtfile = flag.String("f", "conlog.csv", "contest log file name")
-
-var reLine = regexp.MustCompile("^[#]([1-9][0-9]*)$").FindStringSubmatch
+var reIndex = regexp.MustCompile("^([0-9]+)[.]$").FindStringSubmatch
 var reFreq = regexp.MustCompile("^f=([0-9.]+)$").FindStringSubmatch
 var reMode = regexp.MustCompile("^m=([a-z]+)$").FindStringSubmatch
-var reDate = regexp.MustCompile("^d=([0-9][0-9])$").FindStringSubmatch
-var reTime = regexp.MustCompile("^t=([0-9][0-9][0-9][0-9])$").FindStringSubmatch
+var reDate = regexp.MustCompile("^d=([*]|[-0-9]+)$").FindStringSubmatch
+var reTime = regexp.MustCompile("^t=([*]|[0-9]+)$").FindStringSubmatch
+var reMine = regexp.MustCompile("^[']([^']*)[']$").FindStringSubmatch
+
+var reNext = regexp.MustCompile("^(['][^']*[']|[^ ']+)(.*)$").FindStringSubmatch
 
 func main() {
+	log.SetFlags(0)
 	flag.Parse()
+	if flag.NArg() != 1 {
+		log.Fatalf("Expected one arg, the filename, but got %d args.", flag.NArg())
+	}
+	filename := flag.Arg(0)
+	log.Printf("[] filename: %q", filename)
 	home := os.Getenv("HOME")
 	if home == "" {
 		home = "."
 	}
 
 	rl, err := readline.NewEx(&readline.Config{
-		Prompt:          "<=> ",
+		Prompt:          "==> ",
 		HistoryFile:     filepath.Join(home, ".conlog.history"),
 		InterruptPrompt: "*SIGINT*",
 		EOFPrompt:       "*EOF*",
@@ -44,8 +54,8 @@ func main() {
 	}
 	defer rl.Close()
 
-	p := Parser{}
-	p.Load()
+	p := NewParser()
+	p.Load(filename)
 	for {
 		p.Show()
 
@@ -58,6 +68,9 @@ func main() {
 			}
 		} else if err == io.EOF {
 			break
+		} else if err != nil {
+			log.Printf("ReadLine error: %v", err)
+			continue
 		}
 
 		line = strings.TrimSpace(line)
@@ -66,183 +79,264 @@ func main() {
 			continue
 		}
 
-		p.Handle(line)
-		p.Store()
+		p.DoLine(line)
+		p.Store(filename)
 	}
 }
 
-var midQuote = regexp.MustCompile(`^([^"]*)["]([^"]*)["]([^"]*)$`).FindStringSubmatch
+type Basic struct {
+	Freq float64
+	Mode string
+	Date string
+	Time string
+	Mine string
+}
 
 type Qso struct {
-	Freq   float64
-	Mode   string
-	Date   string
-	Time   string
-	Mine   string
+	Base   Basic
 	Theirs []string
 }
 
 type Parser struct {
-	Line   int
-	Freq   float64
-	Mode   string
-	Date   string
-	Time   string
-	Mine   string
-	Theirs []string
-
-	Qsos []*Qso
+	Proto Basic
+	Qsos  []*Qso
 }
 
-func (p *Parser) Handle(line string) {
+func NewParser() *Parser {
+	return &Parser{
+		Proto: Basic{
+			Freq: 7,
+			Mode: "ph",
+			Date: "*",
+			Time: "*",
+			Mine: "*",
+		},
+	}
+}
+
+func (p *Parser) DoLine(line string) {
 	defer func() {
 		r := recover()
 		if r != nil {
 			log.Printf("***** ERROR: %v", r)
 		} else {
-			log.Printf("OK")
+			log.Printf("[OK]")
 		}
 	}()
 
-	p.StartLine()
-	m := midQuote(line)
-	if m != nil {
-		p.HandleMidquote(m[1], m[2], m[3])
+	rest := trim(line)
+	if rest == "" {
+		return
+	}
+
+	var index int
+	var theirs []string
+	var words []string
+	for rest != "" {
+		m := reNext(rest)
+		if m == nil {
+			log.Panicf("cannot parse: %q", rest)
+		}
+		word, rest2 := m[1], m[2]
+		words = append(words, word)
+		rest = trim(rest2)
+	}
+
+	var target *Qso
+	base := &p.Proto
+	for i, w := range words {
+		m := reIndex(words[0])
+		if i == 0 && m != nil {
+			index = atoi(m[1])
+			target = p.Qsos[index-1]
+			base = &target.Base
+			continue
+		}
+
+		consumed := base.SetWord(w)
+		if consumed {
+			continue
+		}
+
+		theirs = append(theirs, w)
+	}
+
+	if theirs != nil {
+		if target != nil {
+			// Edit an old Qso.
+			target.Theirs = theirs
+			log.Printf("EDITED %d. : %v", index, target)
+		} else {
+			// Create a new Qso.
+			q := &Qso{
+				Base:   fixStars(*base),
+				Theirs: theirs,
+			}
+			p.Qsos = append(p.Qsos, q)
+			log.Printf("ADDED %d. : %v", len(p.Qsos), q)
+		}
 	} else {
-		words := strings.Split(line, " ")
-		p.HandleWords(words)
-	}
-	p.FinishLine()
-}
-
-func (p *Parser) HandleMidquote(a, b, c string) {
-	p.Mine = b
-	p.HandleWords(strings.Split(a, " "))
-	p.HandleWords(strings.Split(c, " "))
-}
-
-func (p *Parser) StartLine() {
-	p.Line = 0
-}
-
-func (p *Parser) FinishLine() {
-	switch len(p.Theirs) {
-	case 0:
-		p.Show()
-	case 1:
-		// look up call sign
-		p.Show()
-	default:
-		p.Add()
-		p.Theirs = nil
-	}
-}
-
-func (p *Parser) Add() {
-	q := &Qso{
-		Freq:   p.Freq,
-		Mode:   p.Mode,
-		Date:   p.Date,
-		Time:   p.Time,
-		Mine:   p.Mine,
-		Theirs: p.Theirs,
-	}
-	p.Qsos = append(p.Qsos, q)
-}
-
-func (p *Parser) HandleWords(words []string) {
-	for _, w := range words {
-		if len(w) > 0 {
-			p.HandleWord(w)
+		if target != nil {
+			log.Printf("EDITED %d. : %v", index, target)
+		} else {
+			log.Printf("PROTOTYPE : %v", p.Proto)
 		}
 	}
 }
 
-func (p *Parser) HandleWord(w string) {
-	m := reLine(w)
+func (p *Basic) SetWord(w string) bool {
+	m := reFreq(w)
 	if m != nil {
-		p.HandleLine(m[1])
-		return
-	}
-
-	m = reFreq(w)
-	if m != nil {
-		p.HandleFreq(m[1])
-		return
+		p.SetFreq(m[1])
+		return true
 	}
 
 	m = reMode(w)
 	if m != nil {
-		p.HandleMode(m[1])
-		return
+		p.SetMode(m[1])
+		return true
 	}
 
 	m = reDate(w)
 	if m != nil {
-		p.HandleDate(m[1])
-		return
+		p.SetDate(m[1])
+		return true
 	}
 
 	m = reTime(w)
 	if m != nil {
-		p.HandleTime(m[1])
+		p.SetTime(m[1])
+		return true
+	}
+
+	m = reMine(w)
+	if m != nil {
+		p.SetMine(m[1])
+		return true
+	}
+
+	return false
+}
+
+func (b *Basic) SetFreq(s string) {
+	b.Freq = atof(s)
+}
+
+func (b *Basic) SetMode(s string) {
+	b.Mode = s
+}
+
+func (b *Basic) SetDate(s string) {
+	b.Date = s
+}
+
+func (b *Basic) SetTime(s string) {
+	b.Time = s
+}
+
+func (b *Basic) SetMine(s string) {
+	b.Mine = s
+}
+
+func (p *Parser) Load(filename string) {
+	fd, err := os.Open(filename)
+	if err != nil {
 		return
 	}
+	defer fd.Close()
 
-	p.Theirs = append(p.Theirs, w)
-}
-
-func (p *Parser) HandleLine(x string) {
-	y, err := strconv.ParseInt(x, 10, 64)
-	if err != nil {
-		panic(err)
+	scanner := bufio.NewScanner(fd)
+	for scanner.Scan() {
+		p.DoLine(scanner.Text())
 	}
-	p.Line = int(y)
-}
-
-func (p *Parser) HandleFreq(x string) {
-	y, err := strconv.ParseFloat(x, 64)
-	if err != nil {
-		panic(err)
+	if err2 := scanner.Err(); err2 != nil {
+		log.Fatalf("failed reading %q: %v", filename, err2)
 	}
-	p.Freq = y
 }
 
-func (p *Parser) HandleMode(x string) {
-	p.Mode = x
-}
-
-func (p *Parser) HandleDate(x string) {
-	p.Date = x
-}
-
-func (p *Parser) HandleTime(x string) {
-	p.Time = x
-}
-
-func (p *Parser) Load() {
-}
-func (p *Parser) Store() {
-	tmpfile := *txtfile + ".~"
+func (p *Parser) Store(filename string) {
+	tmpfile := filename + ".~tmp~"
 	f, err := os.Create(tmpfile)
 	if err != nil {
-		log.Fatalf("Cannot create %q: %v", tmpfile, err)
+		log.Fatalf("cannot create %q: %v", tmpfile, err)
 	}
-	defer f.Close()
 	w := bufio.NewWriter(f)
-	defer w.Flush()
+	for _, q := range p.Qsos {
+		fmt.Fprintf(w, "%v\n", q)
+	}
+	fmt.Fprintf(w, "%v\n", p.Proto)
 
-	for i, q := range p.Qsos {
-		fmt.Fprintf(w, `#%-4d f=%8.3f m=%2s d=%2s t=%4s  "%s"  %v%c`,
-			i+1, q.Freq, q.Mode, q.Date, q.Time, q.Mine, q.Theirs, '\n')
+	err = w.Flush()
+	if err != nil {
+		log.Fatalf("cannot flush %q: %v", tmpfile, err)
+	}
+	err = f.Close()
+	if err != nil {
+		log.Fatalf("cannot close %q: %v", tmpfile, err)
+	}
+
+	cmd := exec.Command("/bin/mv", tmpfile, filename)
+	err = cmd.Run()
+	if err != nil {
+		log.Fatalf("cannot rename %q to %q: %v", tmpfile, filename, err)
 	}
 }
 
-func (p *Parser) Show() {
+func (b Basic) String() string {
+	return fmt.Sprintf("f=%-8.3f m=%-2s d=%-10s t=%-4s  '%s'", b.Freq, b.Mode, b.Date, b.Time, b.Mine)
+}
+
+func (q Qso) String() string {
+	return fmt.Sprintf("%v  %s", q.Base, unravel(q.Theirs))
+}
+
+func (p Parser) Show() {
 	for i, q := range p.Qsos {
-		fmt.Printf(`#%-4d f=%8.3f m=%2s d=%2s t=%4s  "%s"  %v%c`,
-			i+1, q.Freq, q.Mode, q.Date, q.Time, q.Mine, q.Theirs, '\n')
+		log.Printf("\t####\t %4d.  %v", i+1, q)
 	}
-	fmt.Printf(`..... f=%8.3f m=%2s d=%2s t=%4s  "%s" ...%c`,
-		p.Freq, p.Mode, p.Date, p.Time, p.Mine, '\n')
+	log.Printf("\t####\t .....  %v  .....", &p.Proto)
+}
+
+// misc functions
+
+func atoi(s string) int {
+	x, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		log.Panicf("cannot ParseInt %q: %v", s, err)
+	}
+	return int(x)
+}
+
+func atof(s string) float64 {
+	y, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		panic(err)
+	}
+	return y
+}
+
+func unravel(vec []string) string {
+	var buf bytes.Buffer
+	for i, s := range vec {
+		if i > 0 {
+			buf.WriteByte(' ')
+		}
+		buf.WriteString(s)
+	}
+	return buf.String()
+}
+
+func trim(s string) string {
+	return strings.Trim(s, " \t\r\n\v")
+}
+
+func fixStars(b Basic) Basic {
+	nowZulu := time.Now().UTC()
+	if b.Date == "*" {
+		b.Date = nowZulu.Format("2006-01-02")
+	}
+	if b.Time == "*" {
+		b.Time = nowZulu.Format("1504")
+	}
+	return b
 }
