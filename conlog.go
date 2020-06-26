@@ -117,22 +117,38 @@ func NewParser() *Parser {
 	}
 }
 
-func (p *Parser) QsoMatches(theirs []string, q *Qso) bool {
-	return (int(p.Proto.Freq) == int(q.Base.Freq) && p.Proto.Mode == q.Base.Mode)
-	if int(p.Proto.Freq) != int(q.Base.Freq) {
+func (p *Parser) FindDup(theirs []string) bool {
+	proto := fixStars(p.Proto)
+	call := theirs[0]
+	for i, q := range p.Qsos {
+		if q.Theirs[0] == call {
+			if proto.QsoMatches(theirs, q, i) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (b *Basic) QsoMatches(theirs []string, q *Qso, i int) bool {
+	return (int(b.Freq) == int(q.Base.Freq) && b.Mode == q.Base.Mode)
+	if int(b.Freq) != int(q.Base.Freq) {
 		return false
 	}
-	if p.Proto.Mode != q.Base.Mode {
+	if b.Mode != q.Base.Mode {
 		return false
 	}
 	if len(theirs) != len(q.Theirs) {
+		log.Printf("*** DETAILS DIFF:  %4d.  %v ***", i, q)
 		return false
 	}
 	for i, e := range theirs {
 		if e != q.Theirs[i] {
+			log.Printf("*** DETAILS DIFF:  %4d.  %v ***", i, q)
 			return false
 		}
 	}
+	log.Printf(">>> SAME:  %4d.  %v <<<", i, q)
 	return true
 }
 
@@ -184,17 +200,20 @@ func (p *Parser) DoLine(line string) {
 	}
 
 	if len(theirs) == 1 {
-		// Call sign check.
-		call := theirs[0]
-		for i, q := range p.Qsos {
-			if q.Theirs[0] == call {
-				if p.QsoMatches(theirs, q) {
-					log.Printf(">>> SAME:  %4d.  %v <<<", i, q)
-				} else {
-					log.Printf("Different:  %4d.  %v", i, q)
+		p.FindDup(theirs)
+		/*
+			// Call sign check.
+			call := theirs[0]
+			for i, q := range p.Qsos {
+				if q.Theirs[0] == call {
+					if p.QsoMatches(theirs, q) {
+						log.Printf(">>> SAME:  %4d.  %v <<<", i, q)
+					} else {
+						log.Printf("Different:  %4d.  %v", i, q)
+					}
 				}
 			}
-		}
+		*/
 
 	} else if len(theirs) > 1 {
 		if target != nil {
@@ -202,13 +221,18 @@ func (p *Parser) DoLine(line string) {
 			target.Theirs = theirs
 			log.Printf("EDITED %d. : %v", index, target)
 		} else {
-			// Create a new Qso.
-			q := &Qso{
-				Base:   fixStars(*base),
-				Theirs: theirs,
+			if p.FindDup(theirs) {
+				log.Printf(">>>>>>> DUP IGNORED <<<<<<<<")
+			} else {
+
+				// Create a new Qso.
+				q := &Qso{
+					Base:   fixStars(*base),
+					Theirs: theirs,
+				}
+				p.Qsos = append(p.Qsos, q)
+				log.Printf("ADDED %d. : %v", len(p.Qsos), q)
 			}
-			p.Qsos = append(p.Qsos, q)
-			log.Printf("ADDED %d. : %v", len(p.Qsos), q)
 		}
 	} else {
 		if target != nil {
@@ -390,7 +414,6 @@ func getFreq() float64 {
 }
 func getMode() string {
 	s := strings.ToLower(runRigctl("m"))
-	log.Printf("GOT: %q", s)
 	switch s {
 	case "lsb":
 		return "ph"
@@ -420,7 +443,6 @@ func fixStars(b Basic) Basic {
 	}
 	if b.Mode == "*" {
 		b.Mode = getMode()
-		log.Printf("MODE: %q", b.Mode)
 	}
 	return b
 }
