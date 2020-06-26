@@ -18,9 +18,11 @@ import (
 	"github.com/chzyer/readline"
 )
 
+var rigctl = flag.String("rigctl", "", "rigctl command with necessary flags")
+
 var reIndex = regexp.MustCompile("^([0-9]+)[.]$").FindStringSubmatch
 var reFreq = regexp.MustCompile("^f=([0-9.]+)$").FindStringSubmatch
-var reMode = regexp.MustCompile("^m=([a-z]+)$").FindStringSubmatch
+var reMode = regexp.MustCompile("^m=([*]|[a-z]+)$").FindStringSubmatch
 var reDate = regexp.MustCompile("^d=([*]|[-0-9]+)$").FindStringSubmatch
 var reTime = regexp.MustCompile("^t=([*]|[0-9]+)$").FindStringSubmatch
 var reMine = regexp.MustCompile("^[']([^']*)[']$").FindStringSubmatch
@@ -57,7 +59,7 @@ func main() {
 	p := NewParser()
 	p.Load(filename)
 	for {
-		p.Show()
+		// p.Show()
 
 		line, err := rl.Readline()
 		if err == readline.ErrInterrupt {
@@ -76,6 +78,7 @@ func main() {
 		line = strings.TrimSpace(line)
 		line = strings.ToLower(line)
 		if line == "" {
+			p.Show()
 			continue
 		}
 
@@ -112,6 +115,25 @@ func NewParser() *Parser {
 			Mine: "*",
 		},
 	}
+}
+
+func (p *Parser) QsoMatches(theirs []string, q *Qso) bool {
+	return (int(p.Proto.Freq) == int(q.Base.Freq) && p.Proto.Mode == q.Base.Mode)
+	if int(p.Proto.Freq) != int(q.Base.Freq) {
+		return false
+	}
+	if p.Proto.Mode != q.Base.Mode {
+		return false
+	}
+	if len(theirs) != len(q.Theirs) {
+		return false
+	}
+	for i, e := range theirs {
+		if e != q.Theirs[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func (p *Parser) DoLine(line string) {
@@ -161,7 +183,20 @@ func (p *Parser) DoLine(line string) {
 		theirs = append(theirs, w)
 	}
 
-	if theirs != nil {
+	if len(theirs) == 1 {
+		// Call sign check.
+		call := theirs[0]
+		for i, q := range p.Qsos {
+			if q.Theirs[0] == call {
+				if p.QsoMatches(theirs, q) {
+					log.Printf(">>> SAME:  %4d.  %v <<<", i, q)
+				} else {
+					log.Printf("Different:  %4d.  %v", i, q)
+				}
+			}
+		}
+
+	} else if len(theirs) > 1 {
 		if target != nil {
 			// Edit an old Qso.
 			target.Theirs = theirs
@@ -330,6 +365,48 @@ func trim(s string) string {
 	return strings.Trim(s, " \t\r\n\v")
 }
 
+func runRigctl(query string) string {
+	if *rigctl == "" {
+		log.Panic("No --rigctl command specified")
+	}
+	ww := strings.Fields(*rigctl)
+	ww = append(ww, query)
+	// var bb bytes.Buffer
+	cmd := exec.Command(ww[0], ww[1:]...)
+	out, err := cmd.Output()
+	if err != nil {
+		msg := ""
+		switch t := err.(type) {
+		case *exec.ExitError:
+			msg = string(t.Stderr)
+		}
+		log.Panicf("Error in --rigctl command: %v -> %v: %q", ww, err, msg)
+	}
+	words := strings.Fields(string(out))
+	return words[0]
+}
+func getFreq() float64 {
+	return atof(runRigctl("f")) / 1e6
+}
+func getMode() string {
+	s := strings.ToLower(runRigctl("m"))
+	log.Printf("GOT: %q", s)
+	switch s {
+	case "lsb":
+		return "ph"
+	case "usb":
+		return "ph"
+	case "am":
+		return "ph"
+	case "fm":
+		return "ph"
+	case "cw":
+		return "cw"
+	default:
+		return "dg"
+	}
+}
+
 func fixStars(b Basic) Basic {
 	nowZulu := time.Now().UTC()
 	if b.Date == "*" {
@@ -337,6 +414,13 @@ func fixStars(b Basic) Basic {
 	}
 	if b.Time == "*" {
 		b.Time = nowZulu.Format("1504")
+	}
+	if b.Freq == 0 {
+		b.Freq = getFreq()
+	}
+	if b.Mode == "*" {
+		b.Mode = getMode()
+		log.Printf("MODE: %q", b.Mode)
 	}
 	return b
 }
