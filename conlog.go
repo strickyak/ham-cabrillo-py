@@ -118,37 +118,40 @@ func NewParser() *Parser {
 }
 
 func (p *Parser) FindDup(theirs []string) bool {
+	z := false
 	proto := fixStars(p.Proto)
 	call := theirs[0]
 	for i, q := range p.Qsos {
 		if q.Theirs[0] == call {
 			if proto.QsoMatches(theirs, q, i) {
-				return true
+				z = true
 			}
 		}
 	}
-	return false
+	return z
 }
 
 func (b *Basic) QsoMatches(theirs []string, q *Qso, i int) bool {
-	return (int(b.Freq) == int(q.Base.Freq) && b.Mode == q.Base.Mode)
+	// return (int(b.Freq) == int(q.Base.Freq) && b.Mode == q.Base.Mode)
 	if int(b.Freq) != int(q.Base.Freq) {
 		return false
 	}
 	if b.Mode != q.Base.Mode {
 		return false
 	}
-	if len(theirs) != len(q.Theirs) {
-		log.Printf("*** DETAILS DIFF:  %4d.  %v ***", i, q)
-		return false
-	}
-	for i, e := range theirs {
-		if e != q.Theirs[i] {
-			log.Printf("*** DETAILS DIFF:  %4d.  %v ***", i, q)
+	if len(theirs) > 1 {
+		if len(theirs) != len(q.Theirs) {
+			log.Printf("*** DETAILS DIFF:  %4d.  %v ***", i+1, q)
 			return false
 		}
+		for j, e := range theirs {
+			if e != q.Theirs[j] {
+				log.Printf("*** DETAILS DIFF:  %4d.  %v ***", i+1, q)
+				return false
+			}
+		}
 	}
-	log.Printf(">>> SAME:  %4d.  %v <<<", i, q)
+	log.Printf(">>> SAME:  %4d.  %v <<<", i+1, q)
 	return true
 }
 
@@ -200,21 +203,9 @@ func (p *Parser) DoLine(line string) {
 	}
 
 	if len(theirs) == 1 {
-		p.FindDup(theirs)
-		/*
-			// Call sign check.
-			call := theirs[0]
-			for i, q := range p.Qsos {
-				if q.Theirs[0] == call {
-					if p.QsoMatches(theirs, q) {
-						log.Printf(">>> SAME:  %4d.  %v <<<", i, q)
-					} else {
-						log.Printf("Different:  %4d.  %v", i, q)
-					}
-				}
-			}
-		*/
-
+		if p.FindDup(theirs) {
+			log.Printf(">>>>>>> IS DUP <<<<<<<<")
+		}
 	} else if len(theirs) > 1 {
 		if target != nil {
 			// Edit an old Qso.
